@@ -5,6 +5,18 @@ VisualStudioVersion = 17.14.36327.8 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zymora", "Zymora\Zymora.csproj", "{9970F375-C8FE-431C-8B77-138B1D294E8E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zymora_BE.Contract.Repositories", "Zymora_BE.Contract.Repositories\Zymora_BE.Contract.Repositories.csproj", "{68C6DBE9-4240-4C9D-AED4-57AC77AE681B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zymora_BE.Contract.Services", "Zymora_BE.Contract.Services\Zymora_BE.Contract.Services.csproj", "{2A7986E8-6D19-4122-9A81-D7356E60407F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zymora_BE.Core", "Zymora_BE.Core\Zymora_BE.Core.csproj", "{F92C1F98-AB94-4182-8F39-A89973607297}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zymora_BE.Middleware", "Zymora_BE.Middleware\Zymora_BE.Middleware.csproj", "{17C997AF-2C90-41B6-97CD-D4A65683C025}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zymora_BE.Repositories", "Zymora_BE.Repositories\Zymora_BE.Repositories.csproj", "{AB0EC1E4-12D9-4C0D-9C36-061BAA324D9B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zymora_BE.Services", "Zymora_BE.Services\Zymora_BE.Services.csproj", "{A55777CB-32D7-4EEE-A270-38D033BC6585}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +27,30 @@ Global
 		{9970F375-C8FE-431C-8B77-138B1D294E8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9970F375-C8FE-431C-8B77-138B1D294E8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9970F375-C8FE-431C-8B77-138B1D294E8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68C6DBE9-4240-4C9D-AED4-57AC77AE681B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68C6DBE9-4240-4C9D-AED4-57AC77AE681B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68C6DBE9-4240-4C9D-AED4-57AC77AE681B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68C6DBE9-4240-4C9D-AED4-57AC77AE681B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A7986E8-6D19-4122-9A81-D7356E60407F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A7986E8-6D19-4122-9A81-D7356E60407F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A7986E8-6D19-4122-9A81-D7356E60407F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A7986E8-6D19-4122-9A81-D7356E60407F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F92C1F98-AB94-4182-8F39-A89973607297}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F92C1F98-AB94-4182-8F39-A89973607297}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F92C1F98-AB94-4182-8F39-A89973607297}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F92C1F98-AB94-4182-8F39-A89973607297}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17C997AF-2C90-41B6-97CD-D4A65683C025}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17C997AF-2C90-41B6-97CD-D4A65683C025}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17C997AF-2C90-41B6-97CD-D4A65683C025}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17C997AF-2C90-41B6-97CD-D4A65683C025}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB0EC1E4-12D9-4C0D-9C36-061BAA324D9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB0EC1E4-12D9-4C0D-9C36-061BAA324D9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB0EC1E4-12D9-4C0D-9C36-061BAA324D9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB0EC1E4-12D9-4C0D-9C36-061BAA324D9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A55777CB-32D7-4EEE-A270-38D033BC6585}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A55777CB-32D7-4EEE-A270-38D033BC6585}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A55777CB-32D7-4EEE-A270-38D033BC6585}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A55777CB-32D7-4EEE-A270-38D033BC6585}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
