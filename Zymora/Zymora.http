@@ -1,0 +1,6 @@
+@Zymora_HostAddress = http://localhost:5113
+
+GET {{Zymora_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
