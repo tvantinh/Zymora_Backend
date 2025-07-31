@@ -25,7 +25,7 @@ namespace Zymora
         {
             services.AddDbContext<DatabaseContext>(options =>
             {
-                options.UseLazyLoadingProxies().UseSqlServer(configuration.GetConnectionString("DbConnect"), b => b.MigrationsAssembly("EcommerceWeb"));
+                options.UseLazyLoadingProxies().UseSqlServer(configuration.GetConnectionString("ZymoraDb"), b => b.MigrationsAssembly("Zymora"));
             });
         }
         public static void AddServices(this IServiceCollection services)
