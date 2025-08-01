@@ -3,6 +3,7 @@ using Zymora_BE.Contract.Services.IService;
 using Microsoft.EntityFrameworkCore;
 using Zymora_BE.Services.Service;
 using Zymora_BE.Services;
+using Zymora_BE.Middleware;
 namespace Zymora
 {
     public static class DependencyInjection
@@ -31,6 +32,10 @@ namespace Zymora
         public static void AddServices(this IServiceCollection services)
         {
             services.AddScoped<IUserService, UserService>();
+        }
+        public static IApplicationBuilder UseAPIResponseWrapperMiddleware(this IApplicationBuilder builder)
+        {
+            return builder.UseMiddleware<ResponseWrappingMiddleware>();
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿//using Zymora_BE.Middleware;
+﻿using Zymora_BE.Middleware;
 using Zymora_BE.Repositories.DataContext;
 using Microsoft.EntityFrameworkCore;
 using Zymora;
@@ -13,7 +13,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddConfig(builder.Configuration);
 var app = builder.Build();
-//app.UseAPIResponseWrapperMiddleware();
+
+app.UseAPIResponseWrapperMiddleware();
 
 if (app.Environment.IsDevelopment())
 {
