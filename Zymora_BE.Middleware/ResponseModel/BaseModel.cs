@@ -13,7 +13,8 @@ namespace Zymora_BE.Middleware.ResponseModel
         public bool Success { get; set; } // indicates if the operation was successful
         public string? Message { get; set; } // message providing additional information about the response
         public T? Data { get; set; } // generic data type for the response payload
-        public object? Errors { get; set; } // object to hold any errors that may have occurred
+        public IEnumerable<ValidationError>? Errors { get; set; } // collection to hold validation errors
+        public required string TraceId { get; set; } // unique identifier for tracing the request
         public DateTime Timestamp { get; set; } = DateTime.UtcNow;// timestamp of the response
     }
 }
