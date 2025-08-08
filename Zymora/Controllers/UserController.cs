@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
@@ -52,7 +53,7 @@ namespace Zymora.Controllers
         [Required(ErrorMessage = "Username không được để trống")]
         public required string Username { get; set; }
         [Required(ErrorMessage = "Password không được để trống")]
-        [MinLength(6, ErrorMessage = "Password phải ít nhất 6 ký tự")]
+        [MinLength(3, ErrorMessage = "Password phải ít nhất 6 ký tự")]
         public required string Password { get; set; }
     }
 }
