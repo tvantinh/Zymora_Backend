@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using Zymora.Authentication;
 using Zymora_BE.Contract.Repositories.Entities;
 using Zymora_BE.Contract.Services.IService;
 
@@ -12,40 +14,43 @@ namespace Zymora.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly IUserService _userService;
-        public UserController(IUserService userService)
-        {
-            _userService = userService;
-        }
-        [HttpGet]
-        public async Task<IActionResult> GetAllUsers()
-        {
-            IList<User> Users = await _userService.GetAll();
-            return Ok(Users);
+        private readonly JWTService _jwt;
 
-        }
-        [HttpGet("exception")]
-        public IActionResult ThrowTestException()
+        public UserController(JWTService jwt)
         {
-            throw new InvalidOperationException("Đây là lỗi test cố tình ném ra.");
+            //_userService = userService;
+            _jwt = jwt;
         }
+        //[HttpGet]
+        //public async Task<IActionResult> GetAllUsers()
+        //{
+        //    IList<User> Users = await _userService.GetAll();
+        //    return Ok(Users);
 
-        [HttpPost("From")]
-        public  IActionResult Login([FromForm] Form login)
+        //}
+        //[HttpGet("exception")]
+        //public IActionResult ThrowTestException()
+        //{
+        //    throw new InvalidOperationException("Đây là lỗi test cố tình ném ra.");
+        //}
+
+        //[HttpPost("From")]
+        //public  async Task<IActionResult> Login([FromForm] Form login)
+        //{
+        //    if (login.Username == "admin" && login.Password == "123")
+        //    {
+        //        jwt.GenerateToken("admin","123","admin");
+        //    }
+
+
+        //}
+        [HttpPost("login")]
+        public IActionResult Login(LoginRequest req)
         {
-            if (login.Username == "admin" && login.Password == "123")
-            {
-                return Ok(new
-                {
-                    success = true,
-                    message = "Đăng nhập thành công"
-                });
-            }
-
-                return BadRequest();
-            
-
+            var token = _jwt.GenerateToken(userId: "123", userName: "alice", role: "Admin");
+            return Ok(new { access_token = token });
         }
+        
 
     }
     public class Form

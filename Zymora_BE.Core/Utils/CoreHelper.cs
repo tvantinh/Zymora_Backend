@@ -8,6 +8,6 @@ namespace Zymora_BE.Core.Utils
 {
     public static class CoreHelper
     {
-        public static DateTimeOffset SystemTimeNow => TimeHelper.ConvertToUTCPlus7(DateTimeOffset.Now);
+        public static DateTimeOffset SystemTimeNow => TimeHelper.ConvertToUTCPlus7(DateTimeOffset.UtcNow);
     }
 }

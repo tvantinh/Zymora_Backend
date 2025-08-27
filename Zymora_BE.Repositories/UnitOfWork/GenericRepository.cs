@@ -29,10 +29,10 @@ namespace Zymora_BE.Repositories.UnitOfWork
                 throw new KeyNotFoundException($"Entity with id {id} not found.");
             _dbSet.Remove(entity);
         }
-        public async Task UpdateAsync(T obj)
+        public Task UpdateAsync(T obj)
         {
             _dbSet.Update(obj);
-            await _context.SaveChangesAsync();
+            return Task.CompletedTask;
         }
 
         public async Task<IList<T>> GetAllAsync()
