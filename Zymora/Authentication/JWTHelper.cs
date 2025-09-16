@@ -6,20 +6,18 @@ namespace Zymora.Authentication
 {
     public class JWTHelper
     {
-        public static string GenerateToken(string secretKey, string? issuer, string? audience, IEnumerable<Claim>? claims, int expirationMinutes)
+        public static string GenerateToken(string secretKey, IEnumerable<Claim>? claims, int expirationMinutes)
         {
             SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
             SigningCredentials creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             JwtSecurityToken token = new JwtSecurityToken(
-                //issuer: issuer,
-                //audience: audience,
                 claims: claims,
                 expires: DateTime.Now.AddMinutes(expirationMinutes),
                 signingCredentials: creds
             );
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-        public static ClaimsPrincipal ValidateToken(string token, string secretKey, string issuer, string audience)
+        public static ClaimsPrincipal ValidateToken(string token, string secretKey)
         {
             JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
             byte[] key = Encoding.UTF8.GetBytes(secretKey);
@@ -28,9 +26,7 @@ namespace Zymora.Authentication
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(key),
                 ValidateIssuer = true,
-                ValidIssuer = issuer,
                 ValidateAudience = true,
-                ValidAudience = audience,
                 ValidateLifetime = true,
                 ClockSkew = TimeSpan.Zero
             };

@@ -10,46 +10,15 @@ namespace Zymora.Controllers
     
     [Route("api/[controller]")]
     [ApiController]
-    public class HomeController : ControllerBase
+    public class HomeController(IUserService userService) : ControllerBase
     {
-        private readonly IUserService _userService;
+        private readonly IUserService _userService = userService;
 
-        public HomeController(IUserService userService)
-        {
-            _userService = userService;
-        }
-        [Authorize]
-        [HttpGet]
+    [HttpGet]
         public async Task<IActionResult> GetAllUsers()
         {
             IList<User> Users = await _userService.GetAll();
             return Ok(Users);
         }
-            //}
-            //[HttpGet("exception")]
-            //public IActionResult ThrowTestException()
-            //{
-            //    throw new InvalidOperationException("Đây là lỗi test cố tình ném ra.");
-            //}
-
-            //[HttpPost("From")]
-            //public  async Task<IActionResult> Login([FromForm] Form login)
-            //{
-            //    if (login.Username == "admin" && login.Password == "123")
-            //    {
-            //        jwt.GenerateToken("admin","123","admin");
-            //    }
-
-
-            //}
-        //    [HttpPost("login")]
-        //public IActionResult Login(LoginRequest req)
-        //{
-        //    // TODO: validate user...
-        //    var token = _jwt.GenerateToken(userId: "123", userName: "alice", role: "Admin");
-        //    return Ok(new { access_token = token });
-        //}
-
-
     }
 }
