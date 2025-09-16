@@ -18,32 +18,8 @@ namespace Zymora.Controllers
 
         public UserController(JWTService jwt)
         {
-            //_userService = userService;
             _jwt = jwt;
         }
-        //[HttpGet]
-        //public async Task<IActionResult> GetAllUsers()
-        //{
-        //    IList<User> Users = await _userService.GetAll();
-        //    return Ok(Users);
-
-        //}
-        //[HttpGet("exception")]
-        //public IActionResult ThrowTestException()
-        //{
-        //    throw new InvalidOperationException("Đây là lỗi test cố tình ném ra.");
-        //}
-
-        //[HttpPost("From")]
-        //public  async Task<IActionResult> Login([FromForm] Form login)
-        //{
-        //    if (login.Username == "admin" && login.Password == "123")
-        //    {
-        //        jwt.GenerateToken("admin","123","admin");
-        //    }
-
-
-        //}
         [HttpPost("login")]
         public IActionResult Login(LoginRequest req)
         {

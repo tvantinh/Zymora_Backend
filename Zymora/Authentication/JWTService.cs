@@ -26,8 +26,6 @@ namespace Zymora.Authentication
                 throw new ArgumentNullException(nameof(secretKey));
             }
             return JWTHelper.GenerateToken(
-                issuer: _configuration["JWT:issuer"],
-                audience: _configuration["JWT:audience"],
                 claims: claims,
                 expirationMinutes: Convert.ToInt32(_configuration["JWT:expirationMinutes"]),
                 secretKey: secretKey
