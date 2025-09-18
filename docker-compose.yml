@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  zymora:
+    image: ${DOCKER_REGISTRY-}zymora
+    build:
+      context: .
+      dockerfile: Zymora/Dockerfile
+      

@@ -23,7 +23,7 @@ namespace Zymora.Controllers
         [HttpPost("login")]
         public IActionResult Login(LoginRequest req)
         {
-            var token = _jwt.GenerateToken(userId: "123", userName: "alice", role: "Admin");
+            var token = _jwt.GenerateToken(userId: "123");
             return Ok(new { access_token = token });
         }
         
