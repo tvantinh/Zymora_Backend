@@ -13,7 +13,7 @@ namespace Zymora.Authentication
             _settings = options.Value;
             _configuration = configuration;
         }
-        public string GenerateToken(string userId, string userName, string role)
+        public string GenerateToken(string userId)
         {
             var claims = new List<Claim>
             {
