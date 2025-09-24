@@ -15,6 +15,7 @@ namespace Zymora_BE.Contract.Repositories.Entities
     [MaxLength(256)]
     public string? NormalizedName { get; set; }
     public string? ConcurrencyStamp { get; set; }
+    public ICollection<UserRoles>? UserRoles { get; set; }
     public ICollection<RolesClaims>? RoleClaims { get; set; }
   }
 }

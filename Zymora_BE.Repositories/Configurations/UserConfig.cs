@@ -17,6 +17,7 @@ namespace Zymora_BE.Repositories.Configurations
       e.HasKey(x => x.Id);
 
       e.Property(x => x.Id).HasMaxLength(450).IsRequired();
+
       e.Property(x => x.UserName).HasMaxLength(256);
       e.Property(x => x.NormalizedUserName).HasMaxLength(256);
       e.Property(x => x.Email).HasMaxLength(256);
@@ -28,6 +29,7 @@ namespace Zymora_BE.Repositories.Configurations
       e.Property(x => x.TwoFactorEnabled).HasDefaultValue(false);
       e.Property(x => x.LockoutEnabled).HasDefaultValue(false);
       e.Property(x => x.AccessFailedCount).HasDefaultValue(0);
+
       e.HasIndex(x => x.NormalizedUserName)
        .HasDatabaseName("UserNameIndex")
        .IsUnique()
@@ -36,24 +38,30 @@ namespace Zymora_BE.Repositories.Configurations
       e.HasIndex(x => x.NormalizedEmail)
        .HasDatabaseName("EmailIndex");
 
-      e.HasMany(x => x.UserRoles)
-       .WithOne(ur => ur.User)
-       .HasForeignKey(ur => ur.Id)
-       .OnDelete(DeleteBehavior.Cascade);
-
-      e.HasMany(x => x.Claims)
+      // 1 - n
+      e.HasMany(u => u.Claims)
        .WithOne(c => c.User)
-       .HasForeignKey(c => c.Id)
+       .HasForeignKey(c => c.UserId)
+       .IsRequired()
        .OnDelete(DeleteBehavior.Cascade);
 
-      e.HasMany(x => x.Logins)
+      e.HasMany(u => u.Logins)
        .WithOne(l => l.User)
-       .HasForeignKey(l => l.Id)
+       .HasForeignKey(l => l.UserId)
+       .IsRequired()
        .OnDelete(DeleteBehavior.Cascade);
 
-      e.HasMany(x => x.Tokens)
+      e.HasMany(u => u.Tokens)
        .WithOne(t => t.User)
-       .HasForeignKey(t => t.Id)
+       .HasForeignKey(t => t.UserId)
+       .IsRequired()
+       .OnDelete(DeleteBehavior.Cascade);
+
+      // 1 - n (User ↔ UserRoles)
+      e.HasMany(u => u.UserRoles)
+       .WithOne(ur => ur.User)
+       .HasForeignKey(ur => ur.UserId)
+       .IsRequired()
        .OnDelete(DeleteBehavior.Cascade);
     }
   }
