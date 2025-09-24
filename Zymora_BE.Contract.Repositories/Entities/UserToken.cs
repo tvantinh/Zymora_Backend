@@ -16,7 +16,7 @@ namespace Zymora_BE.Contract.Repositories.Entities
     [MaxLength(128)]
     public required string Name { get; set; }
     public string? Value { get; set; }
-
+    public required string UserId { get; set; }
     public required User User { get; set; }
   }
 }

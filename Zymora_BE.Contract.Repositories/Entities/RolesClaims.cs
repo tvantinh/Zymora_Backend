@@ -14,6 +14,7 @@ namespace Zymora_BE.Contract.Repositories.Entities
     public string? ClaimType { get; set; }
     [MaxLength(256)]
     public string? ClaimValue { get; set; }
+    public required string RoleId { get; set; }
     public required Roles Role { get; set; }
   }
 }
