@@ -40,6 +40,10 @@ namespace Zymora_BE.Contract.Repositories.Entities
       public bool LockoutEnabled { get; set; }
 
       public int AccessFailedCount { get; set; }
-
+      public ICollection<UserToken>? Tokens { get; set; }
+      public ICollection<UserClaims>? Claims { get; set; }
+      public ICollection<UserLogins>? Logins { get; set; }
+      public ICollection<UserRoles>? UserRoles { get; set; }
+     
   }
 }
