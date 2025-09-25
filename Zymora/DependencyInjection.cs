@@ -37,8 +37,20 @@ namespace Zymora
         {
             services.AddDbContext<DatabaseContext>(options =>
             {
-                options.UseLazyLoadingProxies().UseSqlServer(configuration.GetConnectionString("ZymoraDb"), b => b.MigrationsAssembly("Zymora"));
+              options.UseLazyLoadingProxies()
+                 .UseSqlServer(
+                      configuration.GetConnectionString("ZymoraDb"),
+                      sqlOptions =>
+                      {
+                        sqlOptions.MigrationsAssembly("Zymora");
+                        sqlOptions.EnableRetryOnFailure(
+                              maxRetryCount: 5,                         
+                              maxRetryDelay: TimeSpan.FromSeconds(10), 
+                              errorNumbersToAdd: null          
+                          );
+                 });
             });
+            
         }
         public static void AddServices(this IServiceCollection services)
         {

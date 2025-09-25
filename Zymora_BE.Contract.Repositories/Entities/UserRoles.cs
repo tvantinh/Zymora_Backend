@@ -11,7 +11,7 @@ namespace Zymora_BE.Contract.Repositories.Entities
   {
     public required string UserId { get; set; }
     public required string RoleId { get; set; }
-    public required User User { get; set; }
-    public required Roles Role { get; set; }
+    public virtual required User User { get; set; }
+    public virtual required Roles Role { get; set; }
   }
 }
