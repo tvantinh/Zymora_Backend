@@ -19,13 +19,13 @@ namespace Zymora_BE.Repositories.DataContext
         public DatabaseContext()
         {
         }
-        public DbSet<User> users { get; set; }
-        public DbSet<UserToken> user_tokens { get; set; }
-        public DbSet<UserRoles> user_roles { get; set; }
-        public DbSet<Roles> roles { get; set; }
-        public DbSet<UserClaims> user_claims { get; set; }
-        public DbSet<RolesClaims> roles_claims { get; set; }
-        public DbSet<UserLogins> user_logins { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<UserToken> User_tokens { get; set; }
+        public DbSet<UserRoles> User_roles { get; set; }
+        public DbSet<Roles> Roles { get; set; }
+        public DbSet<UserClaims> User_claims { get; set; }
+        public DbSet<RolesClaims> Roles_claims { get; set; }
+        public DbSet<UserLogins> User_logins { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
