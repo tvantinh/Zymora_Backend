@@ -10,11 +10,11 @@ namespace Zymora.Controllers
   public class Authentication : ControllerBase
   {
     [HttpPost("login")]
-    public async Task<IActionResult> login([FromBody] FormLogin user)
+    public IActionResult login([FromBody] FormLogin user)
     {
-      return Ok(new { message = "Login successful", email = user.getEmail() } );
+      return Ok(new { message = "Login successful", email = user.getEmail() });
     }
-    
+
   }
   public class FormLogin
   {

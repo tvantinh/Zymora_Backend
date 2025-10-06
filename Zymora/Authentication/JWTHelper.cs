@@ -1,6 +1,7 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 namespace Zymora.Authentication
 {
@@ -37,6 +38,11 @@ namespace Zymora.Authentication
                 throw new SecurityTokenException("Invalid token", ex);
             }
         }
-    }
+        private string GenerateRefreshTokenAsync(string userId)
+        {
+          var refreshToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
+          return refreshToken;
+        }
+  }
 }
                      
