@@ -9,7 +9,7 @@ namespace Zymora_BE.Contract.Repositories.Repositories
     {
         IQueryable<T> Entities { get; }
         Task<IList<T>> GetAllAsync();
-        Task<T?> GetByIdAsync(object id);
+        Task<T?> GetByIdAsync(object id); 
         Task AddAsync(T obj);
         Task UpdateAsync(T obj);
         Task DeleteAsync(object id);

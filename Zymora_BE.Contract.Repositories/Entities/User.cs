@@ -12,7 +12,7 @@ namespace Zymora_BE.Contract.Repositories.Entities
     {
 
       [MaxLength(256)]
-      public string? UserName { get; set; }
+      public required string UserName { get; set; }
 
       [MaxLength(256)]
       public string? NormalizedUserName { get; set; }

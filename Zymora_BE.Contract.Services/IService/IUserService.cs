@@ -16,8 +16,7 @@ namespace Zymora_BE.Contract.Services.IService
         Task<User> CreateUser(User user);
         Task<User> UpdateUser(User user);
         Task DeleteUser(int id);
-        Task<bool> CheckUserExists(string email);
-        Task<bool> CheckUserExists(int id);
-
-    }
+        Task<bool> CheckUserExists(string email, string userName);
+        Task<User?> CheckUserExistsByUserName(string userName);
+  }
 }

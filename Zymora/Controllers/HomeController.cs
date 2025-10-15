@@ -22,11 +22,5 @@ namespace Zymora.Controllers
         IList<User> Users = await _userService.GetAll();
         return Ok(Users);
     }
-    [HttpGet]
-    public async Task<IActionResult> GetAll1Users()
-    {
-      IList<User> Users = await _userService.GetAll();
-      return Ok(Users);
-    }
   }
 }
