@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using Zymora.Authentication;
+using Zymora.Models.Settings;
+using Zymora.Models.DTOs.Authentication;
+using Zymora.Services.Interfaces;
 using Zymora_BE.Contract.Repositories.Entities;
 using Zymora_BE.Contract.Services.IService;
 
@@ -15,7 +17,7 @@ namespace Zymora.Controllers
   {
     private readonly IUserService _userService = userService;
     private readonly IJWTService _jwtService = JWTService;
-    [HttpPost("login")]
+    [HttpPost]
     public async Task<IActionResult> login([FromBody] FormLogin user)
     {
       //b1 tìm dưới db coi có account đó không 
@@ -27,7 +29,8 @@ namespace Zymora.Controllers
       else
       {
         //b2 nếu có kiểm tra lại password thì tạo token và trả về
-        string token = _jwtService.GenerateToken(userExist);
+        LoginResponse token = await _jwtService.GenerateToken(userExist);
+        return Ok(token);
       }
     }
 

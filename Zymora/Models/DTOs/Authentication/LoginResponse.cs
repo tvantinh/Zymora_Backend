@@ -1,4 +1,4 @@
-﻿namespace Zymora.DTOs.Authentication
+﻿namespace Zymora.Models.DTOs.Authentication
 {
   public class LoginResponse
   {

@@ -8,10 +8,9 @@ using Zymora_BE.Middleware;
 using Zymora_BE.Repositories.DataContext;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Services.AddConfig(builder.Configuration);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddConfig(builder.Configuration);
 
 
 var app = builder.Build();

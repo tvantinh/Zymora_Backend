@@ -3,7 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-namespace Zymora.Authentication
+namespace Zymora.Services.Helper
 {
   public class JWTHelper
   {
@@ -18,11 +18,13 @@ namespace Zymora.Authentication
       );
       return new JwtSecurityTokenHandler().WriteToken(token);
     }
+
     public static string GenerateRefreshTokenAsync(string userId)
     {
       var refreshToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
       return refreshToken;
     }
+
     public static ClaimsPrincipal ValidateToken(string token, string secretKey)
     {
       JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();

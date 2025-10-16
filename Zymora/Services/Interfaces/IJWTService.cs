@@ -1,8 +1,8 @@
 ﻿using System.Security.Claims;
-using Zymora.DTOs.Authentication;
+using Zymora.Models.DTOs.Authentication;
 using Zymora_BE.Contract.Repositories.Entities;
 
-namespace Zymora.Authentication
+namespace Zymora.Services.Interfaces
 {
   public interface IJWTService
   {
