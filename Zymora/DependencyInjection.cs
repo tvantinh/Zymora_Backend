@@ -2,7 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Zymora.Authentication;
+using Zymora.Models.Settings;
+using Zymora.Services.Implementations;
+using Zymora.Services.Interfaces;
 using Zymora_BE.Contract.Services.IService;
 using Zymora_BE.Middleware;
 using Zymora_BE.Repositories.DataContext;
@@ -17,14 +19,14 @@ namespace Zymora
         {
             services.ConfigRoute();
             services.AddDatabase(configuration);
+            services.AddServicesMain(configuration);
             services.AddInfrastructure(configuration);
-            services.AddServices();
             string? secretKey = configuration["JWT:secretKey"];
             if (string.IsNullOrEmpty(secretKey))
                 throw new ArgumentNullException(nameof(secretKey), "JWT secret key configuration is missing or empty.");
-
             services.AddJwtAuthentication(secretKey);
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(); 
+            
     }
         public static void ConfigRoute(this IServiceCollection services)
         {
@@ -52,10 +54,11 @@ namespace Zymora
             });
             
         }
-        public static void AddServices(this IServiceCollection services)
+        public static void AddServicesMain(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<JWTService>();
+            services.Configure<JWTSettings>(configuration.GetSection("JWT")); 
+            services.AddSingleton(sp => sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<JWTSettings>>().Value);
+            services.AddScoped<IJWTService, JWTService>();
         }
         public static IApplicationBuilder UseAPIResponseWrapperMiddleware(this IApplicationBuilder builder)
         {

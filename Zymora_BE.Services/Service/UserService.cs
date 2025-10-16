@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Zymora_BE.Services.Service
 {
@@ -16,15 +17,15 @@ namespace Zymora_BE.Services.Service
         {
             _unitOfWork = unitOfWork;
         }
-
-        public Task<bool> CheckUserExists(string email)
+        // check user by email or username
+        public Task<bool> CheckUserExists(string email, string UserName)
         {
-            throw new NotImplementedException();
+            return _unitOfWork.GetGenericRepository<User>().Entities.AnyAsync(u => u.Email == email || u.UserName == UserName);
         }
-
-        public Task<bool> CheckUserExists(int id)
+        // check user by id
+        public async Task<User?> CheckUserExistsByUserName(string UserName)
         {
-            throw new NotImplementedException();
+            return await _unitOfWork.GetGenericRepository<User>().Entities.FirstOrDefaultAsync(u => u.UserName == UserName);
         }
 
         public Task<User> CreateUser(User user)

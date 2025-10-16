@@ -2,38 +2,46 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
+using Zymora.Models.Settings;
+using Zymora.Models.DTOs.Authentication;
+using Zymora.Services.Interfaces;
+using Zymora_BE.Contract.Repositories.Entities;
+using Zymora_BE.Contract.Services.IService;
 
 namespace Zymora.Controllers
 {
   [Route("auth/[action]")]
   [ApiController]
-  public class Authentication : ControllerBase
+  public class Authentication(IUserService userService, IJWTService JWTService) : ControllerBase
   {
-    [HttpPost("login")]
-    public IActionResult login([FromBody] FormLogin user)
+    private readonly IUserService _userService = userService;
+    private readonly IJWTService _jwtService = JWTService;
+    [HttpPost]
+    public async Task<IActionResult> login([FromBody] FormLogin user)
     {
-      return Ok(new { message = "Login successful", email = user.getEmail() });
+      //b1 tìm dưới db coi có account đó không 
+      User? userExist = await _userService.CheckUserExistsByUserName(user.UserName);
+      if (userExist is null)
+      {
+        throw new Exception("User không tồn tại");
+      }
+      else
+      {
+        //b2 nếu có kiểm tra lại password thì tạo token và trả về
+        LoginResponse token = await _jwtService.GenerateToken(userExist);
+        return Ok(token);
+      }
     }
 
   }
   public class FormLogin
   {
-    [Required(ErrorMessage = "Email là bắt buộc")]
-    [EmailAddress(ErrorMessage = "Email không hợp lệ")]
-    private string Email { get; set; }
+    [Required(ErrorMessage = "UserName là bắt buộc")]
+    [MinLength(8, ErrorMessage = "UserName phải có ít nhất 8 ký tự")]
+    public required string UserName { get; set; }
     [Required(ErrorMessage = "Mật khẩu là bắt buộc")]
     [MinLength(6, ErrorMessage = "Mật khẩu phải có ít nhất 6 ký tự")]
-    private string Password { get; set; }
-
-    public FormLogin(string email,string password)
-    {
-      Email = email;
-      Password = password;
-    }
-    public void setEmail(string email) => Email = email;
-    public void setPassword(string password) => Password = password;
-    public string getEmail() => Email;
-    public string getPassword() => Password;
-
+    public required string Password { get; set; }
   }
 }

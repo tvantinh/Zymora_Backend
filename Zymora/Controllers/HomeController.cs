@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using Zymora.Authentication;
+using Zymora.Models.Settings;
 using Zymora_BE.Contract.Repositories.Entities;
 using Zymora_BE.Contract.Services.IService;
 
@@ -16,17 +16,10 @@ namespace Zymora.Controllers
         private readonly IUserService _userService = userService;
 
     [HttpGet]
-    [Authorize]
     public async Task<IActionResult> GetAllUsers()
     {
         IList<User> Users = await _userService.GetAll();
         return Ok(Users);
-    }
-    [HttpGet]
-    public async Task<IActionResult> GetAll1Users()
-    {
-      IList<User> Users = await _userService.GetAll();
-      return Ok(Users);
     }
   }
 }
