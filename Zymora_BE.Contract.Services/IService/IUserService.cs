@@ -18,5 +18,6 @@ namespace Zymora_BE.Contract.Services.IService
         Task DeleteUser(int id);
         Task<bool> CheckUserExists(string email, string userName);
         Task<User?> CheckUserExistsByUserName(string userName);
+        Task<bool> VerifyPassword(string userId, string password);
   }
 }

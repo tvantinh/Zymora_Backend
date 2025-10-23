@@ -28,10 +28,12 @@ namespace Zymora_BE.Services.Service
             return await _unitOfWork.GetGenericRepository<User>().Entities.FirstOrDefaultAsync(u => u.UserName == UserName);
         }
 
-        public Task<User> CreateUser(User user)
+        public async Task<User> CreateUser(User user)
         {
-            throw new NotImplementedException();
-        }
+           await _unitOfWork.GetGenericRepository<User>().AddAsync(user);
+           await _unitOfWork.SaveAsync();
+           return user;
+    }
 
         public Task DeleteUser(int id)
         {
@@ -62,6 +64,18 @@ namespace Zymora_BE.Services.Service
         {
             throw new NotImplementedException();
         }
-    }
+        
+        public Task<bool> VerifyPassword(string userId, string password)
+        {
+            string hashedPassword = Convert.ToBase64String(
+                System.Security.Cryptography.SHA256.HashData(
+                    System.Text.Encoding.UTF8.GetBytes(password)
+                )
+            );
+            // Fix: Convert userId to string to match User.Id type
+            return _unitOfWork.GetGenericRepository<User>().Entities
+                .AnyAsync(u => u.Id == userId && u.PasswordHash == hashedPassword);
+        }
+  }
     
 }

@@ -17,22 +17,40 @@ namespace Zymora.Controllers
   {
     private readonly IUserService _userService = userService;
     private readonly IJWTService _jwtService = JWTService;
-    [HttpPost]
-    public async Task<IActionResult> login([FromBody] FormLogin user)
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] FormLogin user)
     {
-      //b1 tìm dưới db coi có account đó không 
+      // B1: Tìm user trong database
       User? userExist = await _userService.CheckUserExistsByUserName(user.UserName);
+
       if (userExist is null)
       {
-        throw new Exception("User không tồn tại");
+        // User không tồn tại - trả về 401 Unauthorized
+        return Unauthorized(new
+        {
+          error = "Invalid credentials",
+          message = "Username or password is incorrect"
+        });
       }
-      else
+
+      // B2: Verify password (giả sử bạn có method VerifyPassword)
+      bool isPasswordValid = await _userService.VerifyPassword(userExist.Id, user.Password);
+
+      if (!isPasswordValid)
       {
-        //b2 nếu có kiểm tra lại password thì tạo token và trả về
-        LoginResponse token = await _jwtService.GenerateToken(userExist);
-        return Ok(token);
+        // Sai password - trả về 401 Unauthorized
+        return Unauthorized(new
+        {
+          error = "Invalid credentials",
+          message = "Username or password is incorrect"
+        });
       }
+
+      // B3: Tạo token và trả về khi thành công
+      LoginResponse token = await _jwtService.GenerateToken(userExist);
+      return Ok(token);
     }
+
 
   }
   public class FormLogin
