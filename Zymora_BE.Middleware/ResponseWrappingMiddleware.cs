@@ -1,137 +1,169 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.WebUtilities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Zymora_BE.Middleware.IResponseModel;
 using Zymora_BE.Middleware.ResponseModel;
+
 namespace Zymora_BE.Middleware
 {
-    public class ResponseWrappingMiddleware
+  public class ResponseWrappingMiddleware
+  {
+    private readonly RequestDelegate _next;
+    private static readonly JsonSerializerOptions JsonOptions = new()
     {
-        private readonly RequestDelegate _next;
-        public ResponseWrappingMiddleware(RequestDelegate next)
-        {
-            _next = next;
-        }
-        public async Task InvokeAsync(HttpContext context)
-        {
-            if (IsSwagger(context))
-            {
-                await _next(context);
-                return;
-            }
+      PropertyNameCaseInsensitive = true
+    };
 
-            Stream originalBodyStream = context.Response.Body;
-
-            await using MemoryStream responseBody = new MemoryStream();
-            context.Response.Body = responseBody;
-
-            try
-            {
-                await _next(context);
-
-                responseBody.Position = 0;
-                string bodyText;
-                using (StreamReader reader = new StreamReader(responseBody, leaveOpen: true))
-                {
-                    bodyText = await reader.ReadToEndAsync();
-                }
-
-                context.Response.Headers.ContentLength = null;
-                responseBody.Position = 0;
-
-                if (context.Response.StatusCode is >= 200 and < 300)
-                {
-                    context.Response.Body = originalBodyStream;
-                    await HandleSuccessAsync(context, context.Response.StatusCode, bodyText);
-                }
-                else
-                {
-                    ValidationProblemDetails? pd = System.Text.Json.JsonSerializer.Deserialize<ValidationProblemDetails>(
-                            bodyText,
-                            new System.Text.Json.JsonSerializerOptions
-                            {
-                                PropertyNameCaseInsensitive = true
-                            }
-                        );
-                    IEnumerable<ValidationError> errors = pd?.Errors != null ? pd.Errors.SelectMany(kvp => kvp.Value.Select(msg => new ValidationError(Field: kvp.Key, message: msg))) : Enumerable.Empty<ValidationError>();
-
-
-                    context.Response.Body = originalBodyStream;
-                    string title = pd?.Title ?? Microsoft.AspNetCore.WebUtilities.ReasonPhrases.GetReasonPhrase(context.Response.StatusCode) ?? "Error";
-                    
-                    await HandleErrorAsync(context, context.Response.StatusCode,title,errors );
-                }
-            }
-            catch (Exception ex)
-            {
-                context.Response.Body = originalBodyStream;
-                await HandleExceptionAsync(context, ex);
-            }
-            finally
-            {
-                context.Response.Body = originalBodyStream;
-            }
-        }
-
-        private static Task HandleSuccessAsync(HttpContext context, int statusCode, object data)
-        {
-            BaseModel<object> response = ResponseFactory.ResponseSuccess<object>(
-                statusCode,
-                true,
-                "success",
-                data,
-                context.TraceIdentifier
-            );
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = statusCode;
-            return context.Response.WriteAsJsonAsync(response);
-        }
-        private static Task HandleExceptionAsync(HttpContext context, Exception ex)
-        {
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-            BaseModel<ValidationError> response = ResponseFactory.ResponseError<ValidationError>
-            (
-                context.Response.StatusCode,
-                false,
-                "An error occurred while processing your request.",
-                new List<ValidationError>
-                {
-                    new ValidationError("Exception", ex.Message)
-                },
-                context.TraceIdentifier
-
-            );
-            return context.Response.WriteAsJsonAsync(response);
-        }
-        private static Task HandleErrorAsync(HttpContext context,int Statuscode, string message, IEnumerable<ValidationError> errorValidations)
-        {
-
-            BaseModel<object> response = ResponseFactory.ResponseError<object>(
-                statusCode: Statuscode,
-                success: false,
-                message: message,
-                errors: errorValidations,
-                TraceID: context.TraceIdentifier
-            );
-
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = Statuscode;
-            context.Response.Headers.ContentLength = null;
-
-            return context.Response.WriteAsJsonAsync(response);
-        }
-        private bool IsSwagger(HttpContext context)
-        {
-            return context.Request.Path.StartsWithSegments("/swagger");
-        }
+    public ResponseWrappingMiddleware(RequestDelegate next)
+    {
+      _next = next ?? throw new ArgumentNullException(nameof(next));
     }
+
+    public async Task InvokeAsync(HttpContext context)
+    {
+      if (ShouldSkipWrapping(context))
+      {
+        await _next(context);
+        return;
+      }
+
+      await ProcessResponseAsync(context);
+    }
+
+    private async Task ProcessResponseAsync(HttpContext context)
+    {
+      var originalBodyStream = context.Response.Body;
+
+      await using var responseBody = new MemoryStream();
+      context.Response.Body = responseBody;
+
+      try
+      {
+        await _next(context);
+
+        var bodyText = await ReadResponseBodyAsync(responseBody);
+        context.Response.Headers.ContentLength = null;
+        context.Response.Body = originalBodyStream;
+
+        if (IsSuccessStatusCode(context.Response.StatusCode))
+        {
+          await WriteSuccessResponseAsync(context, bodyText);
+        }
+        else
+        {
+          await WriteErrorResponseAsync(context, bodyText);
+        }
+      }
+      catch (Exception ex)
+      {
+        context.Response.Body = originalBodyStream;
+        await WriteExceptionResponseAsync(context, ex);
+      }
+    }
+
+    private static async Task<string> ReadResponseBodyAsync(MemoryStream responseBody)
+    {
+      responseBody.Position = 0;
+      using var reader = new StreamReader(responseBody, leaveOpen: true);
+      return await reader.ReadToEndAsync();
+    }
+
+    private static bool IsSuccessStatusCode(int statusCode) => statusCode is >= 200 and < 300;
+
+    private static async Task WriteSuccessResponseAsync(HttpContext context, string bodyText)
+    {
+      var response = ResponseFactory.ResponseSuccess(
+          statusCode: context.Response.StatusCode,
+          success: true,
+          message: "success",
+          data: bodyText,
+          TraceId: context.TraceIdentifier
+      );
+
+      await WriteJsonResponseAsync(context, response, context.Response.StatusCode);
+    }
+
+    private static async Task WriteErrorResponseAsync(HttpContext context, string bodyText)
+    {
+      var validationErrors = ExtractValidationErrors(bodyText);
+      var title = ExtractErrorTitle(bodyText, context.Response.StatusCode);
+
+      var response = ResponseFactory.ResponseError<object>(
+          statusCode: context.Response.StatusCode,
+          success: false,
+          message: title,
+          errors: validationErrors,
+          TraceID: context.TraceIdentifier
+      );
+
+      await WriteJsonResponseAsync(context, response, context.Response.StatusCode);
+    }
+
+    private static async Task WriteExceptionResponseAsync(HttpContext context, Exception ex)
+    {
+      var response = ResponseFactory.ResponseError<ValidationError>(
+          statusCode: (int)HttpStatusCode.InternalServerError,
+          success: false,
+          message: "An error occurred while processing your request.",
+          errors: new List<ValidationError>
+          {
+                    new ValidationError("Exception", ex.Message)
+          },
+          TraceID: context.TraceIdentifier
+      );
+
+      await WriteJsonResponseAsync(context, response, (int)HttpStatusCode.InternalServerError);
+    }
+
+    private static IEnumerable<ValidationError> ExtractValidationErrors(string bodyText)
+    {
+      try
+      {
+        var problemDetails = JsonSerializer.Deserialize<ValidationProblemDetails>(bodyText, JsonOptions);
+
+        return problemDetails?.Errors?
+            .SelectMany(kvp => kvp.Value.Select(msg => new ValidationError(Field: kvp.Key, message: msg)))
+            ?? Enumerable.Empty<ValidationError>();
+      }
+      catch
+      {
+        return Enumerable.Empty<ValidationError>();
+      }
+    }
+
+    private static string ExtractErrorTitle(string bodyText, int statusCode)
+    {
+      try
+      {
+        var problemDetails = JsonSerializer.Deserialize<ValidationProblemDetails>(bodyText, JsonOptions);
+        return problemDetails?.Title
+            ?? ReasonPhrases.GetReasonPhrase(statusCode)
+            ?? "Error";
+      }
+      catch
+      {
+        return ReasonPhrases.GetReasonPhrase(statusCode) ?? "Error";
+      }
+    }
+
+    private static async Task WriteJsonResponseAsync<T>(HttpContext context, T response, int statusCode)
+    {
+      context.Response.ContentType = "application/json";
+      context.Response.StatusCode = statusCode;
+      context.Response.Headers.ContentLength = null;
+      await context.Response.WriteAsJsonAsync(response);
+    }
+
+    private static bool ShouldSkipWrapping(HttpContext context)
+    {
+      return context.Request.Path.StartsWithSegments("/swagger");
+    }
+  }
 }

@@ -65,17 +65,6 @@ namespace Zymora_BE.Services.Service
             throw new NotImplementedException();
         }
         
-        public Task<bool> VerifyPassword(string userId, string password)
-        {
-            string hashedPassword = Convert.ToBase64String(
-                System.Security.Cryptography.SHA256.HashData(
-                    System.Text.Encoding.UTF8.GetBytes(password)
-                )
-            );
-            // Fix: Convert userId to string to match User.Id type
-            return _unitOfWork.GetGenericRepository<User>().Entities
-                .AnyAsync(u => u.Id == userId && u.PasswordHash == hashedPassword);
-        }
   }
     
 }

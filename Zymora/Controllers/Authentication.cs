@@ -8,10 +8,11 @@ using Zymora.Models.DTOs.Authentication;
 using Zymora.Services.Interfaces;
 using Zymora_BE.Contract.Repositories.Entities;
 using Zymora_BE.Contract.Services.IService;
+using System.ComponentModel;
 
 namespace Zymora.Controllers
 {
-  [Route("auth/[action]")]
+  [Route("auth")]
   [ApiController]
   public class Authentication(IUserService userService, IJWTService JWTService) : ControllerBase
   {
@@ -34,7 +35,7 @@ namespace Zymora.Controllers
       }
 
       // B2: Verify password (giả sử bạn có method VerifyPassword)
-      bool isPasswordValid = await _userService.VerifyPassword(userExist.Id, user.Password);
+      bool isPasswordValid = BCrypt.Net.BCrypt.Verify(user.Password, userExist.PasswordHash);
 
       if (!isPasswordValid)
       {
@@ -55,11 +56,14 @@ namespace Zymora.Controllers
   }
   public class FormLogin
   {
+
     [Required(ErrorMessage = "UserName là bắt buộc")]
-    [MinLength(8, ErrorMessage = "UserName phải có ít nhất 8 ký tự")]
+    [MinLength(4, ErrorMessage = "UserName phải có ít nhất 4 ký tự")]
+    [DefaultValue("tinh1")]
     public required string UserName { get; set; }
     [Required(ErrorMessage = "Mật khẩu là bắt buộc")]
     [MinLength(6, ErrorMessage = "Mật khẩu phải có ít nhất 6 ký tự")]
+    [DefaultValue("Tinh123.")]
     public required string Password { get; set; }
   }
 }
