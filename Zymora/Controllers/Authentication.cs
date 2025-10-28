@@ -21,12 +21,10 @@ namespace Zymora.Controllers
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] FormLogin user)
     {
-      // B1: Tìm user trong database
       User? userExist = await _userService.CheckUserExistsByUserName(user.UserName);
 
       if (userExist is null)
       {
-        // User không tồn tại - trả về 401 Unauthorized
         return Unauthorized(new
         {
           error = "Invalid credentials",
@@ -34,12 +32,10 @@ namespace Zymora.Controllers
         });
       }
 
-      // B2: Verify password (giả sử bạn có method VerifyPassword)
       bool isPasswordValid = BCrypt.Net.BCrypt.Verify(user.Password, userExist.PasswordHash);
 
       if (!isPasswordValid)
       {
-        // Sai password - trả về 401 Unauthorized
         return Unauthorized(new
         {
           error = "Invalid credentials",
@@ -47,7 +43,6 @@ namespace Zymora.Controllers
         });
       }
 
-      // B3: Tạo token và trả về khi thành công
       LoginResponse token = await _jwtService.GenerateToken(userExist);
       return Ok(token);
     }

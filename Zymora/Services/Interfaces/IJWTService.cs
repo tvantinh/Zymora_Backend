@@ -6,7 +6,6 @@ namespace Zymora.Services.Interfaces
 {
   public interface IJWTService
   {
-    // Authentication & Token Generation
     Task<LoginResponse> GenerateToken(User user);
     Task<LoginResponse> RefreshToken(string token, string refreshToken);
 

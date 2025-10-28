@@ -72,21 +72,18 @@ namespace Zymora.Services.Implementations
 
     public async Task RevokeRefreshToken(string refreshToken, User user)
     {
-      UserToken userToken = new UserToken
+      UserToken? existingToken = await _context.User_tokens
+        .FirstOrDefaultAsync(ut =>
+            ut.UserId == user.Id &&  // Sửa: Thêm filter theo UserId để bảo mật
+            ut.Value == refreshToken &&
+            ut.LoginProvider == "JWT" &&
+            ut.Name == "RefreshToken");
+
+      if (existingToken != null)
       {
-        UserId = user.Id,
-        LoginProvider = "JWT",
-        Name = "RefreshToken",
-        Value = refreshToken,
-        User = user
-      };
-      UserToken? exstingToken = _context.User_tokens.FirstOrDefault(ut => ut.Value == refreshToken && ut.LoginProvider == "JWT" && ut.Name == "RefreshToken");
-      if (exstingToken != null)
-      {
-        _context.User_tokens.Remove(exstingToken);
+        _context.User_tokens.Remove(existingToken);
+        await _context.SaveChangesAsync();
       }
-      _context.User_tokens.Add(userToken);
-      await _context.SaveChangesAsync();
     }
 
     public Task<bool> ValidateAccessToken(string token)

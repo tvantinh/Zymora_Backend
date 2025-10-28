@@ -18,7 +18,8 @@ namespace Zymora_BE.Middleware
     private readonly RequestDelegate _next;
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
-      PropertyNameCaseInsensitive = true
+      PropertyNameCaseInsensitive = true,
+      PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
     public ResponseWrappingMiddleware(RequestDelegate next)
@@ -79,11 +80,13 @@ namespace Zymora_BE.Middleware
 
     private static async Task WriteSuccessResponseAsync(HttpContext context, string bodyText)
     {
+      object data = ParseJsonData(bodyText);
+
       var response = ResponseFactory.ResponseSuccess(
           statusCode: context.Response.StatusCode,
           success: true,
           message: "success",
-          data: bodyText,
+          data: data,
           TraceId: context.TraceIdentifier
       );
 
@@ -122,6 +125,26 @@ namespace Zymora_BE.Middleware
       await WriteJsonResponseAsync(context, response, (int)HttpStatusCode.InternalServerError);
     }
 
+    private static object ParseJsonData(string bodyText)
+    {
+      if (string.IsNullOrWhiteSpace(bodyText))
+      {
+        return null;
+      }
+
+      try
+      {
+        // Parse thành JsonElement để giữ nguyên cấu trúc JSON
+        using var doc = JsonDocument.Parse(bodyText);
+        return doc.RootElement.Clone();
+      }
+      catch
+      {
+        // Nếu không parse được, trả về string gốc
+        return bodyText;
+      }
+    }
+
     private static IEnumerable<ValidationError> ExtractValidationErrors(string bodyText)
     {
       try
@@ -158,7 +181,7 @@ namespace Zymora_BE.Middleware
       context.Response.ContentType = "application/json";
       context.Response.StatusCode = statusCode;
       context.Response.Headers.ContentLength = null;
-      await context.Response.WriteAsJsonAsync(response);
+      await context.Response.WriteAsJsonAsync(response, JsonOptions);
     }
 
     private static bool ShouldSkipWrapping(HttpContext context)
