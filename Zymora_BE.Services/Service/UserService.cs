@@ -28,10 +28,12 @@ namespace Zymora_BE.Services.Service
             return await _unitOfWork.GetGenericRepository<User>().Entities.FirstOrDefaultAsync(u => u.UserName == UserName);
         }
 
-        public Task<User> CreateUser(User user)
+        public async Task<User> CreateUser(User user)
         {
-            throw new NotImplementedException();
-        }
+           await _unitOfWork.GetGenericRepository<User>().AddAsync(user);
+           await _unitOfWork.SaveAsync();
+           return user;
+    }
 
         public Task DeleteUser(int id)
         {
@@ -62,6 +64,7 @@ namespace Zymora_BE.Services.Service
         {
             throw new NotImplementedException();
         }
-    }
+        
+  }
     
 }
