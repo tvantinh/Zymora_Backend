@@ -6,7 +6,7 @@ using Zymora.Models.Settings;
 using Zymora.Services.Implementations;
 using Zymora.Services.Interfaces;
 using Zymora_BE.Contract.Services.IService;
-using Zymora_BE.Middleware;
+using Zymora_BE.Middleware.Middleware;
 using Zymora_BE.Repositories.DataContext;
 using Zymora_BE.Services;
 using Zymora_BE.Services.Service;
@@ -62,7 +62,7 @@ namespace Zymora
         }
         public static IApplicationBuilder UseAPIResponseWrapperMiddleware(this IApplicationBuilder builder)
         {
-            return builder.UseMiddleware<ResponseWrappingMiddleware>();
+            return builder.UseMiddleware<ResponseWrapperMiddleware>();
         }
 
         public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, string secretKey)

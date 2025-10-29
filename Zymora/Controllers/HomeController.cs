@@ -15,7 +15,7 @@ namespace Zymora.Controllers
     public class HomeController(IUserService userService) : ControllerBase
     {
         private readonly IUserService _userService = userService;
-
+    [Authorize]
     [HttpGet]
     public async Task<IActionResult> GetAllUsers()
     {

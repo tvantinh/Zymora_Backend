@@ -7,7 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Extensitions\QueryableExtensions.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
 	  <FrameworkReference Include="Microsoft.AspNetCore.App" />
+	  <None Include="Extensitions\QueryableExtensions.cs" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.3.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
