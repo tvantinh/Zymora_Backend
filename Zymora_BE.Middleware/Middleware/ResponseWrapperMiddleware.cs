@@ -136,6 +136,7 @@ namespace Zymora_BE.Middleware.Middleware
         wrappedResponse = new
         {
           success = false,
+          status = context.Response.StatusCode,
           message = GetErrorMessage(context.Response.StatusCode),
           data = (object?)null,
           errors = errors,
